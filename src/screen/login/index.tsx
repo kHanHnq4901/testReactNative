@@ -1,142 +1,262 @@
-import React, { useState } from "react";
+import React, {useState, useEffect} from 'react';
 import {
-    View,
-    Text,
-    ImageBackground,
-    TouchableOpacity,
-    Alert
-} from "react-native";
-import { images, fontSizes } from "../../../constants";
+  Image,
+  View,
+  Text,
+  ImageBackground,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+  FlatList,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+} from 'react-native';
+import {images, icons, colors, fontSizes} from '../../constants';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { UiButton } from "../../../components/index";
+import {isValidEmail,isValidPassword} from '../../util/validations';
 
-//import { sum2Number, substract2Number, NhanNumber, ChiaNumber, PI } from "../../../utilies/Calculation";
-// function MainScreen(props: any) {
-//     return <Text>Đây là trang login</Text>
-// }
-function MainScreen(props: any) {
-    //const => let => var
-    //destructuring person object
 
-    // return <Text>Homeeee {sum2Number(4, 5)} {substract2Number(6, 5)} {NhanNumber(6, 5)} {ChiaNumber(6, 5)} {PI}</Text>
-    const [accountTypes, setAccountTypes] = useState([
-        {
-            key: 1,
-            name: 'ĐL Hà Nội',
-            isSelected: false,
-        },
-        {
-            key: 2,
-            name: 'NPC',
-            isSelected: false,
-        },
-        {
-            key: 3,
-            name: 'Khách hàng lẻ',
-            isSelected: false,
-        }
-    ]);
+function Login(props: any) {
+    const {navigation,route} =props
+    const {navigate,goBack} = navigation
+    const [errEmail,setErrorEmail] = useState('');
+    const [errPassword, setErrorPassword] = useState('');  
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    // state => where a state is changed => ui is reloaded
-    return <View style={{ backgroundColor: "white", flex: 100 }}>
-        <ImageBackground source={images.background}
-            resizeMode='cover'
-            style={{
-                flex: 100,
-            }}
-        >
-            <View style={{
-                flex: 20,
-            }}>
-                <View style={{
-                    flexDirection: "row",
-                    height: 50,
-                    justifyContent: 'flex-start',
-                    alignItems: 'center',
+    const isValidationOk = () => email.length >0 
+                                &&password.length > 0 
+                                && isValidEmail(email) == true 
+                                && isValidPassword(password) == true
+    const [keyboardIsShown, setKeyboardIsShown] = useState(false);
+  useEffect(() => {
+    //componentDidMount
+    Keyboard.addListener('keyboardDidShow', () => {
+      //Alert.alert('keyboardDidShow')
+      setKeyboardIsShown(true);
+    });
+    Keyboard.addListener('keyboardDidHide', () => {
+      //Alert.alert('keyboardDidHide')
+      setKeyboardIsShown(false);
+    });
+  });
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{
+        flex: 100,
+        backgroundColor: 'white',
+      }}>
+          <TouchableOpacity onPress={() =>{
+                    navigate ('Welcome')
                 }}>
-                    {/* <Image source={icons.fire}
+          <Icon name="arrow-left" size={35} color={colors.primary} />
+        </TouchableOpacity>
+      <View
+        style={{
+          flex: 35,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+        }}>
+        <Text
+          style={{
+            color: 'black',
+            fontSize: fontSizes.h2,
+            fontWeight: 'bold',
+            marginLeft: 10,
+            marginTop: 10,
+            width: '50%',
+          }}>
+          Bạn có sẵn sàng để tạo một tài khoản?
+        </Text>
+        <Image
+          source={images.meter}
+          style={{
+            width: 100,
+            height: 100,
+            marginLeft: 10,
+            marginTop: 10,
+            alignSelf: 'center',
+          }}
+        />
+      </View>
+      <View
+        style={{
+          flex: 25,
+          flexDirection: 'column',
+        }}>
+        <View
+          style={{
+            marginHorizontal: 15,
+          }}>
+          <Text
             style={{
-                marginStart: 10,
-                marginEnd: 10,
-                width: 30,
-                height: 30,
-            }} /> */}
-                    <Icon
-                        name="fire"
-                        size={25}
-                        style={{
-                            color: 'white',
-                            marginStart: 10,
-                            marginEnd: 10,
-                            width: 30,
-                            height: 30,
-                        }} />
-
-                    <Text style={{
-                        color: 'white',
-                    }}>EMIC</Text>
-                    <View style={{ flex: 1 }} />
-                    <TouchableOpacity onPress={() => Alert.alert('Tính năng đang phát triển')}>
-                        <Icon
-                            name="gear"
-                            size={25}
-                            style={{
-                                color: 'white',
-                                marginEnd: 10,
-                            }} />
-                    </TouchableOpacity>
-
-                </View>
-            </View>
-            <View style={{
-                flex: 20,
-                width: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
+              fontSize: fontSizes.h5,
+              color: colors.primary,
             }}>
-                <Text style={{ marginBottom: 7, color: 'white', }}>Chào mừng bạn đến</Text>
-                <Text style={{ marginBottom: 7, color: 'white', fontWeight: 'bold', fontSize: 14, }}> Phần mềm ghi chỉ số HU-01 Esof</Text>
-                <Text style={{ marginBottom: 7, color: 'white', }}>
-                    Vui lòng chọn loại tài khoản của bạn</Text>
-            </View>
-            <View style={{ flex: 40 }}>
-                {accountTypes.map(accountType => <UiButton onPress={() => {
-                    setAccountTypes(accountTypes.map(eachAccountType => {
-                        return {
-                            ...eachAccountType,
-                            isSelected: eachAccountType.name === accountType.name,
-                        };
-                    }));
-                }}
-                    title={accountType.name}
-                    isSelected={accountType.isSelected} />)}
-            </View>
-            <View style={{
-                flex: 20,
+            Email :
+          </Text>
+          <TextInput
+            onChangeText={(text: string) =>{
+                if(isValidEmail(text) == false) {
+                    setErrorEmail('Email không đúng định dạng');
+                }else {
+                    setErrorEmail('')
+                }
+                setEmail(text)
+            }}
+            style={{
+              color: 'black',
+            }}
+            placeholder="example@gmail.com"
+            placeholderTextColor={colors.gray}
+          />
+          <View
+            style={{
+              height: 1,
+              backgroundColor: colors.primary,
+              width: '100%',
+              marginBottom: 10,
+              marginHorizontal: 15,
+              alignSelf: 'center',
+            }}/>
+             <Text style={{
+                color:'red',
+                marginHorizontal:15,
+                marginBottom:5,
+                alignSelf : 'center',
+             }}>{errEmail}</Text>
+        </View>
+        <View
+          style={{
+            marginHorizontal: 15,
+          }}>
+          <Text
+            style={{
+              fontSize: fontSizes.h5,
+              color: colors.primary,
             }}>
-                <UiButton title="Đăng nhập"></UiButton>
-                <Text style={{
-                    color: 'white',
-                    fontSize: fontSizes.h5,
-                    alignSelf: 'center',
-                }}>Bạn chưa có tài khoản ?</Text>
-                <TouchableOpacity
-                    onPress={() => {
-                        Alert.alert('Tính năng đang phát triển');
-                    }}
-                    style={{
-                        padding: 10,
-                    }}>
-                    <Text style={{
-                        color: 'red',
-                        alignSelf: 'center',
-                        fontSize: fontSizes.h5,
-                        textDecorationLine: 'underline',
-                    }}>Đăng ký</Text>
-                </TouchableOpacity>
-
-            </View>
-        </ImageBackground>
-    </View>;
+            Password :
+          </Text>
+          <TextInput
+              onChangeText={(text: string) =>{
+                if(isValidPassword(text) == false) {
+                    setErrorPassword('Mật khẩu không được nhỏ hơn 3 ký tự');
+                }else {
+                    setErrorPassword('')
+                }
+                setPassword(text)
+            }}
+            style={{
+              color: 'black',
+            }}
+            secureTextEntry={true}
+            placeholder="Nhập mật khẩu của bạn"
+            placeholderTextColor={colors.gray}
+          />
+          <View
+            style={{
+              height: 1,
+              backgroundColor: colors.primary,
+              width: '100%',
+              marginBottom: 10,
+              marginHorizontal: 15,
+              alignSelf: 'center',
+            }}/>
+                     <Text style={{
+                color:'red',
+                marginHorizontal:15,
+                marginBottom:5,
+                alignSelf : 'center',
+             }}>{errPassword}</Text>
+        </View>
+      </View>  
+      {keyboardIsShown == false && <View
+        style={{
+          flex: 20,
+          marginTop : 20
+        }}>
+        <TouchableOpacity
+        disabled = {isValidationOk() == false ? true : false}
+        onPress={() =>{
+            navigate ('UITab')
+        }}
+          style={{
+            backgroundColor: isValidationOk() == false ? colors.gray : colors.primary ,
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignSelf: 'center',
+            width: '50%',
+            borderRadius: 20,
+          }}>
+          <Text
+            style={{
+              padding: 8,
+              fontSize: fontSizes.h4,
+            }}>
+            Đăng nhập
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigate ('Register')
+          }}
+          style={{
+            padding: 5,
+            alignSelf: 'center',
+          }}>
+          <Text
+            style={{
+              padding: 8,
+              fontSize: fontSizes.h4,
+              color: colors.primary,
+            }}>
+            
+            Người dùng mới? Đăng ký ngay bây giờ
+          </Text>
+        </TouchableOpacity>
+      </View>}
+      {keyboardIsShown == false && <View
+        style={{
+          flex: 20,
+        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginHorizontal: 30,
+          }}>
+          <View style={{height: 1, backgroundColor: 'black', flex: 1}}></View>
+          <Text
+            style={{
+              padding: 8,
+              fontSize: fontSizes.h4,
+              color: colors.black,
+              alignSelf: 'center',
+              marginHorizontal: 10,
+            }}>
+            Sử dụng phương thức khác?
+          </Text>
+          <View style={{height: 1, backgroundColor: 'black', flex: 1}}></View>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+          }}>
+        <TouchableOpacity>
+          <Icon name="facebook" size={35} color={colors.facebook} />
+          </TouchableOpacity>
+          <View style={{width: 20}} />
+          <TouchableOpacity>
+          <Icon name="google" size={35} color={colors.google} />
+          </TouchableOpacity>
+        </View>
+      </View>}
+    </KeyboardAvoidingView>
+  );
 }
-export default MainScreen;
+export default Login;

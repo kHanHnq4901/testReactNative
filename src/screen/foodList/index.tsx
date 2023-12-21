@@ -18,7 +18,7 @@ import {
     icons,
     colors,
     fontSizes
-} from "../../../constants"
+} from "../../constants"
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FoodItem from "./item";
 /**

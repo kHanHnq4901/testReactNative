@@ -22,8 +22,8 @@ function UiButton(props: any): any {
                 marginVertical: 10,
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: isSelected == true ? 'white' : null,
-                borderColor: isSelected == true ? 'white' : null,
+                backgroundColor: isSelected == true ? 'white':'black' ,
+                borderColor: isSelected == true ? 'white' : '',
             }}>
             {isSelected == true && <Icon
                 name="check-circle"

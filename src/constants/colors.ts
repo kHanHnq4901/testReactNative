@@ -20,4 +20,6 @@ export default {
     royalblue: 'rgb(65, 105, 225)',
     steelblue: 'rgb(70, 130, 180)',
     indigo: 'rgb(75, 0, 130)',
+    google : '#E55437',
+    facebook : '#1070DA',
 }
