@@ -26,7 +26,7 @@ import {
 } from '../../repositories/index';
 import {convertDateTimeToString} from '../../util/datetime';
 import { Dimensions } from "react-native";
-
+import SpinnerOverlay from 'react-native-loading-spinner-overlay';
 function Population (props:any) {
   //PopulationRepository.getPopulation('Nation','Population');
   const chartConfig = {
@@ -46,23 +46,37 @@ function Population (props:any) {
   }
   
   const [Populations, setPopulations] = useState<PopulationData[]>([]);
+  const [loading, setLoading] = useState(true);
   
-  useEffect (() => {
-    PopulationRepository.getPopulation('Nation','Population').then((repositoryPopulation:any) => {
-      if(repositoryPopulation){
-        setPopulations(repositoryPopulation)
+  useEffect(() => {
+    PopulationRepository.getPopulation('Nation', 'Population').then((repositoryPopulation: any) => {
+      if (repositoryPopulation) {
+        setPopulations(repositoryPopulation);
+        setLoading(false); // Đã tải xong dữ liệu
       }
-    })
-  }, []) // Thêm một mảng rỗng như là tham số thứ hai của useEffect, để chỉ chạy một lần duy nhất sau khi component được render
+    });
+  }, []);
+  
+  if (loading) {
+    return (
+      <View>
+        <SpinnerOverlay
+          visible={loading}
+          textContent={'Đang tải...'}
+          animation='fade'
+        />
+      </View>
+    ); // Hiển thị thông báo tải dữ liệu
+  }
+  
   const populationLabels = Populations.map(item => item.year).reverse();
-const populationData = Populations.map(item => Math.floor(item.population/100000)).reverse();
-console.log(populationLabels, populationData)
+  const populationData = Populations.map(item => Math.floor(item.population / 100000)).reverse();
   return (
     <View>
-      <Text>
+      {/* <Text>
         {JSON.stringify(Populations)} 
         Biểu đồ 
-      </Text>
+      </Text> */}
       <LineChart
        data={{
         labels: populationLabels,

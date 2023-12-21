@@ -17,7 +17,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { population as PopulationRepository, user as UserRepository } from '../../repositories/index';
 import { convertDateTimeToString } from '../../util/datetime';
-
+import SpinnerOverlay from 'react-native-loading-spinner-overlay';
 const Profile = (props: any) => {
   const [user, setUser] = useState<{
     dateOfBirth?: string;
@@ -31,11 +31,12 @@ const Profile = (props: any) => {
     phone?: string;
     registeredDate?: string;
   }>({});
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     UserRepository.getUserDetails().then((responseUser:any) => {
       if (responseUser) {
         setUser(responseUser);
+        setLoading(false); 
       }
     });
   }, []);
@@ -52,7 +53,17 @@ const Profile = (props: any) => {
     phone,
     registeredDate,
   } = user || {};
-
+  if (loading) {
+    return (
+      <View>
+        <SpinnerOverlay
+          visible={loading}
+          textContent={'Đang tải...'}
+          animation='fade'
+        />
+      </View>
+    ); // Hiển thị thông báo tải dữ liệu
+  }
   return (
     <SafeAreaView style={styles.container}>
       <Image style={styles.profileImage} source={{ uri: url }} />
@@ -67,7 +78,7 @@ const Profile = (props: any) => {
 
         <View style={styles.row}>
           <Text style={styles.label}>Date of Birth:</Text>
-          <Text style={styles.text}>{convertDateTimeToString(JSON.stringify(dateOfBirth))}</Text>
+          <Text style={styles.text}>{dateOfBirth ? convertDateTimeToString(dateOfBirth) : ''}</Text>
         </View>
 
         <View style={styles.row}>
@@ -105,7 +116,7 @@ const Profile = (props: any) => {
 
         <View style={styles.row}>
           <Text style={styles.label}>Registered Date:</Text>
-          <Text style={styles.text}>{convertDateTimeToString(JSON.stringify(registeredDate))}</Text>
+          <Text style={styles.text}>{registeredDate ? convertDateTimeToString(registeredDate) : ''}</Text>
         </View>
       </View>
     </SafeAreaView>
